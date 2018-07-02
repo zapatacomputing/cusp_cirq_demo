@@ -1,0 +1,99 @@
+
+"""Driver routine for Stage Two of CUSP: Training the Quantum Autoencoder."""
+
+import cusp_stage2
+import numpy as np
+from scipy.optimize import minimize
+
+import settings
+from cusp_demo_utils import *
+
+
+# Settings for running the QAE optimization
+a = 'a'
+b = 'b'
+x = 'x'
+z = 'z'
+var_param = [a, b, x, z]
+
+num_trials = settings.num_trials
+bond_lengths = settings.bond_lengths
+no_noise = settings.no_sampling_noise
+gate_error = settings.gate_error
+
+# A wrapper to make sure that the selection of var_param above is properly resolved when input to the function
+num_param = len(var_param)
+fixed_vals = [0.25, 0.5, 1.0, 1.0]
+all_param = [a, b, x, z]
+
+
+def compute_avg_fid_proxy(params, training_states, n_repetitions, exact=no_noise, noisy=gate_error):
+    """Computes cost function value, 1 - average fidelity, over the training set.
+    If the cost function is 0, the QAE is perfectly encoding. Max error is 1.
+
+    Args:
+    =====
+    params : numpy.ndarray
+        Vector of QAE parameters
+    training_states : list
+        List of training state parameters
+    n_repetitions : int
+        Number of circuit runs/trials
+    exact : bool
+        If True, works with wavefunction
+    noisy : bool
+        If True, runs noisy version of circuit
+
+    Returns:
+    ========
+    cost_fcn_val : float
+        Cost function value equivalent to 1 - average fidelity
+    """
+    input_list = fix_list(params, all_param_array=all_param, var_param_array=var_param, fixed_vals_array=fixed_vals)
+    fidelities = []
+    for training_state in training_states:
+        fid = cusp_stage2.compute_stage2_cost_function(*input_list, alpha=training_state, n_repetitions=n_repetitions,
+                                                       exact=exact, noisy=noisy)
+        fidelities.append(fid)
+    avg_fid = np.mean(fidelities)
+    return 1. - avg_fid
+
+def run_qae_optimization(training_states, n_repetitions, exact=no_noise, noisy=gate_error):
+    """Runs optimization for QAE.
+
+    Args:
+    =====
+    training_states : list[float]
+        List of optimized training state parameters
+    n_repetitions : int
+        Number of circuit runs/trials
+    exact : bool
+        If True, works with wavefunction
+    noisy : bool
+        If True, runs noisy version of circuit
+
+    Returns:
+    ========
+    optimized_qae_params : numpy.ndarray
+        Vector of optimized QAE circuit parameters
+    """
+    # Initialize parameters
+    half_turn_min = 0
+    half_turn_max = 2
+    init_params = np.random.uniform(low=half_turn_min, high=half_turn_max,
+                                    size=num_param)
+
+    # Optimization using Nelder-Mead.
+    h2_qae_wrap = lambda params: compute_avg_fid_proxy(params, training_states=training_states,
+                                                       n_repetitions=n_repetitions, exact=exact, noisy=noisy)
+    res = minimize(h2_qae_wrap, init_params, args=(),
+                   method='Nelder-Mead', tol=None, 
+                   options={'disp': False, 'maxiter': None, 'xatol': 0.001,
+                   'return_all': False, 'fatol': 0.001})
+    return res.x
+
+
+# if __name__ == "__main__":
+
+#     test = cusp_stage2._run_sim_stage2(a=1, b=1, x=1, z=1, alpha=0.5, exact=True, print_circuit=False, noisy=False)
+#     print(test)
