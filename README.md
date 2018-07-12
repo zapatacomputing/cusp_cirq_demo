@@ -16,7 +16,7 @@ To proceed to the code demo, see: [CUSP Demo](https://github.com/zapatacomputing
 ## Dependencies and Versions Used
 - Python 3.5
 - [OpenFermion](https://github.com/quantumlib/OpenFermion) 0.6
-- [Cirq](https://github.com/quantumlib/Cirq) 
+- Add Cirq link here 
 
 ## Authors
 [Jonathan Olson](https://github.com/olsonjonny), [Sukin Sim (Hannah)](https://github.com/hsim13372), [Yudong Cao](https://github.com/yudongcao)
