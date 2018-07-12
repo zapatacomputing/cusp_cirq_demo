@@ -8,13 +8,13 @@ from scipy.optimize import minimize
 import settings
 from cusp_demo_utils import *
 
-
 # Settings for running the QAE optimization
-a = 'a'
-b = 'b'
-x = 'x'
-z = 'z'
-var_param = [a, b, x, z]
+user_parameters_stage2 = np.load('data/user_parameters_stage2.npy')
+#w1 = 'w1'
+#w2 = 'w2'
+#z = 'z'
+#cz = 'cz'
+var_param = user_parameters_stage2[0]
 
 num_trials = settings.num_trials
 bond_lengths = settings.bond_lengths
@@ -23,8 +23,8 @@ gate_error = settings.gate_error
 
 # A wrapper to make sure that the selection of var_param above is properly resolved when input to the function
 num_param = len(var_param)
-fixed_vals = [0.25, 0.5, 1.0, 1.0]
-all_param = [a, b, x, z]
+fixed_vals = [user_parameters_stage2[1], user_parameters_stage2[2], user_parameters_stage2[3], user_parameters_stage2[4]]
+all_param = ['w1','w2','z','cz']
 
 
 def compute_avg_fid_proxy(params, training_states, n_repetitions, exact=no_noise, noisy=gate_error):
@@ -86,9 +86,15 @@ def run_qae_optimization(training_states, n_repetitions, exact=no_noise, noisy=g
     # Optimization using Nelder-Mead.
     h2_qae_wrap = lambda params: compute_avg_fid_proxy(params, training_states=training_states,
                                                        n_repetitions=n_repetitions, exact=exact, noisy=noisy)
+    
+    if noisy:
+        maxiter = 40
+    else:
+        maxiter = None
+        
     res = minimize(h2_qae_wrap, init_params, args=(),
                    method='Nelder-Mead', tol=None, 
-                   options={'disp': False, 'maxiter': None, 'xatol': 0.001,
+                   options={'disp': False, 'maxiter': maxiter, 'xatol': 0.001,
                    'return_all': False, 'fatol': 0.001})
     return res.x
 

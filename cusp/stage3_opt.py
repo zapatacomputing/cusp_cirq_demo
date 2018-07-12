@@ -9,18 +9,16 @@ from cusp_demo_utils import *
 
 
 # Settings
-aht = 'aht'
-ht = 'ht'
-zz = 'zz'
+user_parameters_stage3 = np.load('data/user_parameters_stage3.npy')
 num_trials = settings.num_trials
 no_noise = settings.no_sampling_noise
 gate_error = settings.gate_error
-var_param = [aht, ht, zz]
+var_param = user_parameters_stage3[0]
 
 # A wrapper to make sure that the selection of var_param above is properly resolved when input to the function
 num_param = len(var_param)
-fixed_vals = [0, 0, 0]
-all_param = [aht, ht, zz]
+fixed_vals = [user_parameters_stage3[1], user_parameters_stage3[2], user_parameters_stage3[3]]
+all_param = ['aht','ht','zz']
 
 def stage3(lst, bond_length, n_repetitions=num_trials):
     """Cost function for stage 3. Outputs the energy expectation for given training set point.

@@ -12,7 +12,7 @@ from cirq.contrib.jobs.depolarizer_channel import DepolarizerChannel
 
 import settings
 from cusp_demo_utils import *
-
+import stage2_opt
 
 # Adjusts the probability of noisy Z rotations occuring in the circuit
 noise_level = settings.noise_level
@@ -22,6 +22,8 @@ q00, q01, q10, q11 = settings.q00, settings.q01, settings.q10, settings.q11
 qubit_ordering = settings.qubit_ordering
 
 stage2_array = np.load('data/stage2_param.npy')
+stage2_array = fix_list(stage2_array,stage2_opt.all_param,stage2_opt.var_param,stage2_opt.fixed_vals)
+
 a = stage2_array[0]  # half_turns on W gate, ideal is .25
 b = stage2_array[1]  # axis_half_turns on W gate, ideal is .5
 x = stage2_array[2]  # half_turns on 11 gate, ideal is 1
@@ -99,7 +101,7 @@ def noisy_job_stage3(aht, ht, zz, exact=False):
 
 def _run_sim_stage3(aht, ht, zz, exact=False, print_circuit=False, noisy=False):
     """Helper routine to executes state preparation circuit a single time.
-    Outputs 1 for a success (i.e. reference qubits are |000>) and 0 for a failure.
+    Outputs a state vector.
 
     Args:
     =====

@@ -1,4 +1,3 @@
-
 import numpy as np
 import os
 from openfermion.hamiltonians import MolecularData

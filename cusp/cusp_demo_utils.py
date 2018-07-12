@@ -50,10 +50,12 @@ def param_CNOT(w_half_turns, w_axis_half_turns, proj11_half_turns, z_half_turns,
     out.tolist()
     return out
 
-# A wrapper to make sure that the selection of var_param above is properly resolved when input to the function
+# A wrapper to make sure that the selection of variational parameters is properly resolved when input to the function
 def fix_list(lst, all_param_array, var_param_array, fixed_vals_array):
     out_list = []
     count = 0
+    if type(lst)!=np.ndarray:
+        lst = [lst]
     for j in all_param_array:
         if j in var_param_array:
             out_list.append(lst[count])

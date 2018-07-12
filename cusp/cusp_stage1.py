@@ -103,7 +103,7 @@ def noisy_job_stage1(alpha, exact=False):
 
 def _run_sim_stage1(alpha, exact=True, print_circuit=False, noisy=False):
     """Helper routine to executes state preparation circuit a single time.
-    Outputs 1 for a success (i.e. reference qubits are |000>) and 0 for a failure.
+    Outputs a state vector of the circuit.
 
     Args:
     =====
