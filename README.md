@@ -13,10 +13,12 @@ For a formal description of the CUSP protocol, please see: [CUSP Algorithm Overv
 
 To proceed to the code demo, see: [CUSP Demo](https://github.com/zapatacomputing/cusp_cirq_demo/blob/master/cusp_demo_short.ipynb).
 
+For a short video tutorial, see: [Video Code Walkthrough](https://www.youtube.com/watch?v=79Hd-M_xN3Q)
+
 ## Dependencies and Versions Used
 - Python 3.5
 - [OpenFermion](https://github.com/quantumlib/OpenFermion) 0.6
-- Add Cirq link here 
+- [Cirq](https://github.com/quantumlib/Cirq) 
 
 ## Authors
 [Jonathan Olson](https://github.com/olsonjonny), [Sukin Sim (Hannah)](https://github.com/hsim13372), [Yudong Cao](https://github.com/yudongcao)
