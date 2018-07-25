@@ -172,7 +172,7 @@ def compute_stage1_cost_function(alpha, bond_length, n_repetitions=100, exact=Tr
     
     energy_expectation = 0
     
-    p = Pool(1)
+    p = Pool()
     args = [(alpha, bond_length)] * n_repetitions
     results = p.starmap(one_run,args)
     energy_expectation = np.array(results).mean()

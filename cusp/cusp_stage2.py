@@ -1,7 +1,7 @@
-
 """Routines for Stage Two of CUSP: Training the Quantum Autoencoder."""
 
 import numpy as np
+from multiprocessing import Pool
 
 from cirq import Circuit, MeasurementGate, ParamResolver
 from cirq.ops import *
@@ -171,6 +171,10 @@ def _run_sim_stage2(a, b, x, z, alpha, exact=False, print_circuit=False, noisy=F
         print(circuit_run.to_text_diagram(use_unicode_characters=False))
     return total
 
+def one_run(a, b, x, z, alpha):
+    success = _run_sim_stage2(a, b, x, z, alpha, exact=True, print_circuit=False, noisy=True)
+    return success
+
 def compute_stage2_cost_function(a, b, x, z, alpha, n_repetitions, exact=False, noisy=False):
     """Executes circuit multiple times and computes the average fidelity.
     over n times (n_repetitions).
@@ -197,8 +201,12 @@ def compute_stage2_cost_function(a, b, x, z, alpha, n_repetitions, exact=False, 
         return _run_sim_stage2(a, b, x, z, alpha, exact=exact, print_circuit=False, noisy=noisy)
     
     success_count = 0
-    for k in range(n_repetitions):
-        success_count += _run_sim_stage2(a, b, x, z, alpha, exact=exact, print_circuit=False, noisy=noisy)
-
+   
+    
+    p = Pool()
+    args = [(a,b,x,z,alpha)] * n_repetitions
+    results = p.starmap(one_run,args)
+    success_count = np.array(results).sum()
     avg_fid = float(success_count) / float(n_repetitions)
+    
     return avg_fid

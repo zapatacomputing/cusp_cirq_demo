@@ -3,17 +3,6 @@ import time
 from multiprocessing import Pool
 from scipy.optimize import minimize
 
-### SETTINGS ###
-num_trials = 100
-include_gate_noise = True
-noise_level = 0.003
-
-bond_lengths = [1.0]
-
-user_settings = np.array([True, include_gate_noise, noise_level,
-                          num_trials, bond_lengths], dtype=object)
-np.save('data/user_settings', user_settings)
-
 ###STAGE 1###
 import sys
 from config import CODE_DIRECTORY
@@ -21,6 +10,7 @@ sys.path.append(CODE_DIRECTORY)
 
 # User settings for CUSP
 import settings
+from set_settings import *
 from cusp_demo_utils import *
 import cusp_stage1
 import stage1_opt_data
@@ -57,5 +47,3 @@ for bond_length in bond_lengths:
     
     # Save these optimized VQE parameters into numpy arrays
     np.save('data/stage1_param_{}'.format(bond_length), opt_stage1_params)
-    
-print(now)

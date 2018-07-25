@@ -55,7 +55,7 @@ def run_state_preparation_optimization(bond_length):
     # Minimize using Nelder-Mead
     res = minimize(stage1, init_params, args=(),
                    method='Nelder-Mead', tol=None, 
-                   options={'disp': False, 'maxiter': 10,
+                   options={'disp': False, 'maxiter': None,
                    'xatol': 0.001, 'return_all': False, 'fatol': 0.001})
     np.savetxt('stage1_data_'+str(bond_length)+'.csv',result_list, delimiter=',')
     return res.x
