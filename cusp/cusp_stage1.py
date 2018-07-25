@@ -2,6 +2,7 @@
 """Routines for Stage One of CUSP: Training Set Preparation."""
 
 import numpy as np
+from multiprocessing import Pool
 
 from cirq import Circuit, MeasurementGate, ParamResolver
 from cirq.ops import *
@@ -138,6 +139,10 @@ def _run_sim_stage1(alpha, exact=True, print_circuit=False, noisy=False):
         print(circuit_run.to_text_diagram(use_unicode_characters=False))
     return result.final_state
 
+def one_run(alpha, bond_length):
+    f_state = _run_sim_stage1(alpha=alpha, exact=True, print_circuit=False, noisy=False)
+    return settings.compute_energy_expectation(bond_length, particle_number_conserve(f_state))
+                       
 def compute_stage1_cost_function(alpha, bond_length, n_repetitions=100, exact=True, noisy=False):
     """Executes state preparation circuit multiple times and computes the energy expectation
     over n times (n_repetitions).
@@ -166,7 +171,9 @@ def compute_stage1_cost_function(alpha, bond_length, n_repetitions=100, exact=Tr
         return energy_expectation
     
     energy_expectation = 0
-    for k in range(int(n_repetitions)):
-        f_state = _run_sim_stage1(alpha=alpha, exact=exact, print_circuit=False, noisy=noisy)
-        energy_expectation += settings.compute_energy_expectation(bond_length, particle_number_conserve(f_state)) / float(n_repetitions)
+    
+    p = Pool(1)
+    args = [(alpha, bond_length)] * n_repetitions
+    results = p.starmap(one_run,args)
+    energy_expectation = np.array(results).mean()
     return energy_expectation
