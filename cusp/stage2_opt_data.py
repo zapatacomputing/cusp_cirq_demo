@@ -26,7 +26,6 @@ gate_error = settings.gate_error
 num_param = len(var_param)
 fixed_vals = [user_parameters_stage2[1], user_parameters_stage2[2], user_parameters_stage2[3], user_parameters_stage2[4]]
 all_param = ['w1','w2','z','cz']
-result_list = []
 
 def compute_avg_fid_proxy(params, training_states, n_repetitions, exact=no_noise, noisy=gate_error):
     """Computes cost function value, 1 - average fidelity, over the training set.
@@ -57,8 +56,8 @@ def compute_avg_fid_proxy(params, training_states, n_repetitions, exact=no_noise
                                                        exact=exact, noisy=noisy)
         fidelities.append(fid)
     avg_fid = np.mean(fidelities)
-    global result_list
-    result_list.append(1-avg_fid)
+    #nonlocal result_list
+    #result_list.append(1-avg_fid)
     print(1-avg_fid)
     return 1. - avg_fid
 
@@ -81,7 +80,23 @@ def run_qae_optimization(training_states, n_repetitions, exact=no_noise, noisy=g
     optimized_qae_params : numpy.ndarray
         Vector of optimized QAE circuit parameters
     """
-    global result_list
+    result_list = []
+    def proxy(params, training_states, n_repetitions, exact=no_noise, noisy=gate_error):
+        """Embedded function version
+        """
+        input_list = fix_list(params, all_param_array=all_param, var_param_array=var_param, fixed_vals_array=fixed_vals)
+        fidelities = []
+        for training_state in training_states:
+            fid = cusp_stage2.compute_stage2_cost_function(*input_list, alpha=training_state, n_repetitions=n_repetitions,
+                                                       exact=exact, noisy=noisy)
+            fidelities.append(fid)
+        avg_fid = np.mean(fidelities)
+        #nonlocal result_list
+        result_list.append(1-avg_fid)
+        print(1-avg_fid)
+        return 1. - avg_fid
+
+    
     # Initialize parameters
     half_turn_min = 0
     half_turn_max = 2
@@ -89,11 +104,11 @@ def run_qae_optimization(training_states, n_repetitions, exact=no_noise, noisy=g
                                     size=num_param)
 
     # Optimization using Nelder-Mead.
-    h2_qae_wrap = lambda params: compute_avg_fid_proxy(params, training_states=training_states,
+    h2_qae_wrap = lambda params: proxy(params, training_states=training_states,
                                                        n_repetitions=n_repetitions, exact=exact, noisy=noisy)
     
     if noisy:
-        maxiter = 200
+        maxiter = 60
     else:
         maxiter = None
         
