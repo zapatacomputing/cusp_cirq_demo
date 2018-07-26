@@ -140,7 +140,7 @@ def _run_sim_stage1(alpha, exact=True, print_circuit=False, noisy=False):
     return result.final_state
 
 def one_run(alpha, bond_length):
-    f_state = _run_sim_stage1(alpha=alpha, exact=True, print_circuit=False, noisy=False)
+    f_state = _run_sim_stage1(alpha=alpha, exact=True, print_circuit=False, noisy=True)
     return settings.compute_energy_expectation(bond_length, particle_number_conserve(f_state))
                        
 def compute_stage1_cost_function(alpha, bond_length, n_repetitions=100, exact=True, noisy=False):
