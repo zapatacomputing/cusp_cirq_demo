@@ -201,7 +201,6 @@ def compute_stage2_cost_function(a, b, x, z, alpha, n_repetitions, exact=False, 
         return _run_sim_stage2(a, b, x, z, alpha, exact=exact, print_circuit=False, noisy=noisy)
     
     success_count = 0
-   
     
     p = Pool()
     args = [(a,b,x,z,alpha)] * n_repetitions
