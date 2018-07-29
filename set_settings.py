@@ -1,7 +1,7 @@
 import numpy as np
 
 ### SETTINGS ###
-num_trials = 100
+num_trials = 1000
 include_gate_noise = True
 noise_level = 0.003
 

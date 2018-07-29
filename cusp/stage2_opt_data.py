@@ -80,7 +80,7 @@ def run_qae_optimization(training_states, n_repetitions, exact=no_noise, noisy=g
     optimized_qae_params : numpy.ndarray
         Vector of optimized QAE circuit parameters
     """
-    #result_list = []
+    result_list = []
     def proxy(params, training_states, n_repetitions, exact=no_noise, noisy=gate_error):
         """Embedded function version
         """
@@ -91,7 +91,7 @@ def run_qae_optimization(training_states, n_repetitions, exact=no_noise, noisy=g
                                                        exact=exact, noisy=noisy)
             fidelities.append(fid)
         avg_fid = np.mean(fidelities)
-        #result_list.append(1-avg_fid)
+        result_list.append(1-avg_fid)
         print(1-avg_fid)
         return 1. - avg_fid
 
@@ -115,5 +115,5 @@ def run_qae_optimization(training_states, n_repetitions, exact=no_noise, noisy=g
                    method='Nelder-Mead', tol=None, 
                    options={'disp': False, 'maxiter': maxiter, 'xatol': 0.001,
                    'return_all': False, 'fatol': 0.001})
-    #np.savetxt('stage2_data.csv',result_list, delimiter=',')
+    np.savetxt('stage2_data.csv',result_list, delimiter=',')
     return res.x

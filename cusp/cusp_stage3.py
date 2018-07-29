@@ -2,6 +2,7 @@
 """Routines for Stage Three of CUSP: Generative Model Search."""
 
 import numpy as np
+from multiprocessing import Pool
 
 from cirq import Circuit, MeasurementGate, ParamResolver
 from cirq.ops import *
@@ -135,6 +136,10 @@ def _run_sim_stage3(aht, ht, zz, exact=False, print_circuit=False, noisy=False):
         print(circuit_run.to_text_diagram(use_unicode_characters=False))
     return result.final_state
 
+def one_run(aht, ht, zz, bond_length):
+    f_state = _run_sim_stage3(aht=aht, ht=ht, zz=zz, exact=True, print_circuit=False, noisy=True)
+    return settings.compute_energy_expectation(bond_length, particle_number_conserve(f_state))
+
 def run_sim_repetitions_stage3(aht, ht, zz, bond_length, n_repetitions, exact=True, noisy=False):
     """Executes state preparation circuit multiple times and computes the energy expectation
     over n times (n_repetitions).
@@ -164,6 +169,11 @@ def run_sim_repetitions_stage3(aht, ht, zz, bond_length, n_repetitions, exact=Tr
     
     energy_expectation = 0
     for k in range(n_repetitions):
-        final_state = _run_sim_stage3(aht, ht, zz, exact, print_circuit=False, noisy=noisy)
-        energy_expectation += settings.compute_energy_expectation(bond_length, particle_number_conserve(final_state)) / float(n_repetitions)
-    return float(energy_expectation)
+        energy_expectation += one_run(aht,ht,zz,bond_length)
+    energy_expectation = energy_expectation / float(n_repetitions)
+
+   # p = Pool()
+   # args = [(aht, ht, zz, bond_length)] * n_repetitions
+   # results = p.starmap(one_run,args)
+   # energy_expectation = np.array(results).mean()
+    return energy_expectation
