@@ -62,7 +62,7 @@ for i, bond_length in enumerate(bond_lengths):
                                              N=num_trials)
     res = minimize(stage3_fcn, init_params, args=(),
                    method='Nelder-Mead', tol=None, 
-                   options={'disp': False, 'maxiter': 100, 'xatol': 0.001,
+                   options={'disp': False, 'maxiter': 50, 'xatol': 0.001,
                             'return_all': False, 'fatol': 0.001})
     opt_cusp_param = res.x
     opt_cusp_param = fix_list(opt_cusp_param, stage3_opt_data.all_param,stage3_opt_data.var_param,

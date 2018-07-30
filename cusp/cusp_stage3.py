@@ -167,13 +167,13 @@ def run_sim_repetitions_stage3(aht, ht, zz, bond_length, n_repetitions, exact=Tr
         energy_expectation = settings.compute_energy_expectation(bond_length, particle_number_conserve(final_state))
         return energy_expectation
     
-    energy_expectation = 0
-    for k in range(n_repetitions):
-        energy_expectation += one_run(aht,ht,zz,bond_length)
-    energy_expectation = energy_expectation / float(n_repetitions)
+   # energy_expectation = 0
+   # for k in range(n_repetitions):
+   #     energy_expectation += one_run(aht,ht,zz,bond_length)
+   # energy_expectation = energy_expectation / float(n_repetitions)
 
-   # p = Pool()
-   # args = [(aht, ht, zz, bond_length)] * n_repetitions
-   # results = p.starmap(one_run,args)
-   # energy_expectation = np.array(results).mean()
+    p = Pool()
+    args = [(aht, ht, zz, bond_length)] * n_repetitions
+    results = p.starmap(one_run,args)
+    energy_expectation = np.array(results).mean()
     return energy_expectation
