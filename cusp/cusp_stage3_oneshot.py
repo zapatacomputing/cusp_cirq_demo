@@ -176,5 +176,4 @@ def run_sim_repetitions_stage3(aht, ht, zz, bond_length, n_repetitions, exact=Tr
     args = [(aht, ht, zz, bond_length)] * n_repetitions
     results = p.starmap(one_run,args)
     energy_expectation = np.array(results).mean()
-    p.close()
     return energy_expectation

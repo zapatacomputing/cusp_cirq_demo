@@ -36,8 +36,8 @@ import stage2_opt_data
 print('Stage 2 using the following bond lengths for training: {}\n'.format(bond_lengths))
 
 # QAE settings
-threshold = 0.20
-n_qae_trials = 10
+threshold = 0.10
+n_qae_trials = 20
 
 print('#### STAGE 2 OF CUSP NOW RUNNING ####\n')
 opt_qae_params = stage2_opt_data.run_qae_optimization(training_states=stage1_param_list,

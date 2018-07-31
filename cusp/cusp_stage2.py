@@ -204,11 +204,13 @@ def compute_stage2_cost_function(a, b, x, z, alpha, n_repetitions, exact=False, 
    # for k in range(n_repetitions):
    #     fid_one_run = _run_sim_stage2(a,b,x,z,alpha, exact=exact, print_circuit=False, noisy=noisy)
    #     success_count += fid_one_run   
-   # success_count = success_count / float(n_repetitions)
+   # avg_fid = success_count / float(n_repetitions)
+
     p = Pool()
     args = [(a,b,x,z,alpha)] * n_repetitions
     results = p.starmap(one_run,args)
     success_count = np.array(results).sum()
     avg_fid = float(success_count) / float(n_repetitions)
+    p.close()
     
-    return success_count
+    return avg_fid

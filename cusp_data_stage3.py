@@ -3,7 +3,7 @@ import time
 from multiprocessing import Pool
 from scipy.optimize import minimize
 
-###STAGE 2###
+###STAGE 3###
 import sys
 from config import CODE_DIRECTORY
 sys.path.append(CODE_DIRECTORY)
@@ -83,3 +83,8 @@ for i, bond_length in enumerate(bond_lengths):
    #         np.abs(stage1_energies[i] - check_energies[i])))
    # print('Energy difference (CUSP    vs. exact)   : {}\n'.format(
    #         np.abs(cusp_energy - check_energies[i])))
+
+    # Print the single-qubit circuit parameters
+    
+print('Autoencoder parameters: {}\n'.format(opt_qae_params))
+print('Latent circuit parameters: {}'.format(cusp_params))
